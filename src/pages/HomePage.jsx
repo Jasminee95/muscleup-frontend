@@ -18,16 +18,16 @@ export default function HomePage() {
         <Container className="text-center text-light">
 
           <h2 className="mt-3 text-uppercase fw-semibold text-danger">
-            "Push harder than yesterday if you want a different tomorrow"
+            Push harder than yesterday if you want a different tomorrow
           </h2> 
-         
+      
           <h3 className="mt-5 fw-bold">
             FIND EXERCISES
             <br />
             FOR ALL MUSCLE GROUPS
+        
           </h3>
          
-
           <Row className="justify-content-center mt-4">
             {["Chest", "Back", "Arms", "Legs", "Shoulders", "Abs"].map(
               (muscle) => (
@@ -52,14 +52,14 @@ export default function HomePage() {
               className="search-input"
             />
           </Form>
-
-          <div className="bottom-image mt-5">
+                   <div className="bottom-image mt-5">
             <img
               src={strongWomanImg}
               alt="strong-woman"
               className="img-fluid"
             />
           </div>
+          
         </Container>
       </div>
     </div>

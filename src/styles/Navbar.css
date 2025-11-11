@@ -1,24 +1,52 @@
 .custom-navbar {
-  background: rgba(0, 0, 0, 0.95);
-  border-bottom: 2px solid #ff1e1e;
-  box-shadow: 0 2px 15px rgba(255, 30, 30, 0.3);
+  background: #000; /* HELT svart */
+  padding: 35px 0; /* god høyde, men ikke for ekstrem */
+  border-bottom: 2px solid #ff1e1e; /* rød linje */
+  box-shadow: 0 3px 20px rgba(255, 30, 30, 0.25);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
 .navbar-logo {
-  color: #ff1e1e !important;
-  font-weight: 1000;
+  font-size: 3.5rem;          /* større tekst */
+  font-weight: 1000;          /* ekstra bold */
+  color: #ff1e1e !important;  /* ren rød */
+  letter-spacing: 4px;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 30, 30, 0.6);
+  text-shadow: 0 0 30px rgba(255, 0, 0, 0.9); /* intens glød */
+  margin-left: 20px;
 }
 
 .nav-link {
-  color: #ffffff !important;
-  font-weight: 600;
-  margin-right: 20px;
-  transition: color 0.2s ease;
+  color: #fff !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  transition: all 0.25s ease;
 }
 
 .nav-link:hover {
   color: #ff1e1e !important;
+  transform: scale(1.05);
+}
+
+.nav-btn {
+  font-weight: 700;
+  border: 2px solid #ff1e1e;
+  border-radius: 8px;
+  padding: 10px 25px;
+  text-transform: uppercase;
+  color: #ff1e1e;
+  background: transparent;
+  transition: all 0.3s ease;
+  margin-left: 30px;
+}
+
+.nav-btn:hover {
+  background-color: #ff1e1e;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(255, 30, 30, 0.8);
 }
