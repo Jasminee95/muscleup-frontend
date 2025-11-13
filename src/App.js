@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import AppNavbar from "./components/Navbar";
 import ProfilePage from "./pages/ProfilePage";
-
+import AuthPage from "./pages/AuthPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AppNavbar from "./components/Navbar";
 
 function App() {
   return (
@@ -11,7 +12,16 @@ function App() {
       <AppNavbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/me" element={<ProfilePage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route
+          path="/me"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        
       </Routes>
     </Router>
   );

@@ -1,16 +1,58 @@
-const API_BASE_URL = "http://localhost:5000";
+import axios from "axios";
 
+
+
+const api = axios.create({
+  baseURL: "https://localhost:8080",
+  withCredentials: true,
+});
 
 export async function getExercises() {
   try {
-    const response = await fetch(`${API_BASE_URL}/exercises`);
-    if (!response.ok) throw new Error("Failed to fetch exercises");
-    return response.json();
+    const res = await api.get("/api/exercises");
+    return res.data;
   } catch (err) {
     console.error("Error fetching exercises:", err);
     return [];
   }
 }
+
+
+export async function registerUser(userData) {
+  try {
+    const res = await api.post("/auth/register", userData);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { error: "Could not register user." };
+  }
+}
+
+export async function loginUser(email, password) {
+  const res = await api.post("/auth/login", { email, password });
+  return res.data; 
+}
+
+export async function logoutUser() {
+  try {
+    const res = await api.post("/auth/logout");
+    return res.data;
+  } catch (err) {
+    console.error("Logout failed:", err);
+    throw err.response?.data || { error: "Logout failed." };
+  }
+}
+
+
+ export async function getCurrentUser() {
+  try {
+    const res = await api.get("/auth/me");
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { error: "Not logged in." };
+  }
+}
+
+
 
 
 // export async function getPlans() {

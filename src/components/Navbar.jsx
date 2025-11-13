@@ -11,11 +11,8 @@ export default function AppNavbar() {
         </Navbar.Brand>
 
         <div className="nav-links d-flex align-items-center">
-          <Nav.Link href="/" className="nav-link">
+          <Nav.Link href="/"  className="nav-link">
             Home
-          </Nav.Link>
-          <Nav.Link href="/plans" className="nav-link">
-            Plans
           </Nav.Link>
           <Button href="/me" variant="danger" className="nav-btn ms-4">
             Profile
