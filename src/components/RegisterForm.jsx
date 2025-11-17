@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import "react-bootstrap";
-import axios from "axios";
+import { registerUser } from "../services/api.js";
 
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -11,19 +10,14 @@ export default function RegisterForm() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://127.0.0.1:8080/auth/register", {
-        username,
-        email,
-        password,
-      });
-      setMessage(res.data.message || "Registration successful!");
+      const res = await registerUser({ username, email, password });
+      setMessage(res.message);
     } catch (err) {
-        console.error(err.response);
-      setMessage(err.response?.data?.error || "Error: Could not register user.");
+      setMessage(err.error || "Error: Could not register user.");
     }
   };
 
-    return (
+  return (
     <form onSubmit={handleRegister}>
       <h3 className="text-center mb-3">Create Account</h3>
       {message && <p className="text-info">{message}</p>}

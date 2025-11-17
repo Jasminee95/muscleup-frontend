@@ -3,7 +3,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8080",
+  baseURL: "http://localhost:8080",
   withCredentials: true,
 });
 
@@ -13,6 +13,20 @@ export async function getExercises() {
     return res.data;
   } catch (err) {
     console.error("Error fetching exercises:", err);
+    return [];
+  }
+}
+export async function searchExercises(query) {
+  try {
+    const res = await api.get(`/api/exercises?search=${query}`);
+    
+    if (Array.isArray(res.data.data)) {
+    return  res.data.data;
+  } 
+
+  return []
+ } catch (err) {
+    console.error("Error searching exercises:", err);
     return [];
   }
 }

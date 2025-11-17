@@ -2,15 +2,32 @@ import React, { useState } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import "../styles/HomePage.css";
 import strongWomanImg from "../assets/strongWoman.jpeg";
+import { searchExercises } from "../services/api";
 
 export default function HomePage() {
   const [search, setSearch] = useState("");
+  const [exercises, setExercises] = useState([]);
+  const [selectedMuscle, setSelectMuscle] = useState("");
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Searching for:", search);
-    
-  };
+const handleMuscleClick = async (muscle) => {
+  setSelectMuscle(muscle);
+  setSearch("");
+
+  const results = await searchExercises(muscle.toLowerCase());
+  console.log("Muscle results:", results);
+  setExercises(results);
+};
+
+const handleSearch = async (e) => {
+  e.preventDefault();
+  if (search.trim() === "") return;
+
+  setSelectMuscle("");
+  const results = await searchExercises(search.toLowerCase());
+  console.log("Search results:", results);
+  setExercises(results);
+};
+
 
   return (
     <div className="homepage">
@@ -32,7 +49,13 @@ export default function HomePage() {
             {["Chest", "Back", "Arms", "Legs", "Shoulders", "Abs"].map(
               (muscle) => (
                 <Col xs="auto" key={muscle}>
-                  <Button variant="outline-danger" className="muscle-btn m-2">
+                  <Button
+                    variant="outline-danger"
+                    className={`muscle-btn m-2 ${
+                      selectedMuscle === muscle ? "active-muscle" : ""
+                    }`}
+                    onClick={() => handleMuscleClick(muscle)}
+                  >
                     {muscle}
                   </Button>
                 </Col>
@@ -52,14 +75,46 @@ export default function HomePage() {
               className="search-input"
             />
           </Form>
-                   <div className="bottom-image mt-5">
+                   
+
+          <div className="exercise-results mt-5">
+            {exercises.length > 0 && (
+              <h4 className="text-danger mb-4">Exercises Found:</h4>
+            )}
+
+            {exercises.map((ex) => (
+              <div
+                key={ex.exerciseId}
+                className="exercise-card mx-auto mb-3 p-3"
+                style={{
+                  width: "70%",
+                  border: "1px solid red",
+                  borderRadius: "10px",
+                  backgroundColor: "rgba(0,0,0,0.6)",
+                }}
+              >
+                <h5 className="text-danger">{ex.name}</h5>
+                <p><strong>Muscle:</strong> {ex.target}</p>
+                <p><strong>Body Part:</strong> {ex.bodyPart}</p>
+                <p><strong>Equipment:</strong> {ex.equipment}</p>
+                {ex.imageUrl && (
+        <img
+          src={ex.imageUrl}
+          alt={ex.name}
+          className="img-fluid mt-3"
+          style={{ maxHeight: "200px", borderRadius: "8px" }}
+        />
+         )}
+              </div>
+            ))}
+          </div>
+          <div className="bottom-image mt-5">
             <img
               src={strongWomanImg}
               alt="strong-woman"
               className="img-fluid"
             />
           </div>
-          
         </Container>
       </div>
     </div>
