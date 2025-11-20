@@ -1,90 +1,75 @@
 .content-wrapper {
+  width: 100%;
   display: flex;
-  gap: 50px;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.profile-page h2,
+.profile-page h3,
+.profile-page h4,
+.profile-page h5 {
+  text-align: center !important;
+  width: 100%;
+}
+
+.week-calendar {
+  
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.day-cell {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid red;
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 120px;
+}
+
+.day-name {
+  font-weight: bold;
+  color: #ff4d4d;
+  margin-bottom: 10px;
+}
+
+.exercise-list {
+  list-style: none;
+  padding-left: 0;
+  font-size: 0.9rem;
+}
+
+.no-exercise {
+  opacity: 0.7;
 }
 
 .favorite-grid {
-  flex: 1 1 400px;
-  max-width: 600px;
-  background: rgba(0, 0, 0, 0.65);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid red;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+  padding: 20px;
 }
 
 .favorite-card {
-  cursor: pointer;
-  margin-bottom: 15px;
+  background: rgba(0,0,0,0.6);
   border: 1px solid red;
-  border-radius: 10px;
   padding: 10px;
-  transition: 0.3s;
+  border-radius: 8px;
+  cursor: pointer;
   text-align: center;
-  background: rgba(0, 0, 0, 0.4);
 }
-
 .favorite-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
   border-color: gold;
 }
 
 .favorite-card img {
   width: 100%;
-  max-height: 140px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.week-calendar-wrapper {
-  flex: 1 1 350px;
-  max-width: 400px;
-  background: rgba(0, 0, 0, 0.65);
-  border: 1px solid red;
-  border-radius: 10px;
-  padding: 15px;
-}
-
-.week-calendar {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto; /* hvis skjermen er smal */
-  padding-bottom: 10px;
-}
-
-.day-cell {
-  flex: 0 0 140px; /* hver dag får fast bredde */
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid red;
-  border-radius: 8px;
-  padding: 10px;
-}
-
-.day-name {
-  color: red;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.exercise-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.exercise-item {
-  background: rgba(255, 0, 0, 0.2);
-  margin-bottom: 6px;
-  padding: 6px 8px;
+  height: 120px;
+  object-fit: contain;
   border-radius: 6px;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.no-exercise {
-  color: gray;
-  font-style: italic;
-  text-align: center;
 }

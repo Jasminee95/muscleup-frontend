@@ -17,7 +17,7 @@ function WeekCalendar({ weekplan }) {
     "Sunday",
   ];
 
-    return (
+  return (
     <div className="week-calendar">
       {weekDays.map((day) => (
         <div key={day} className="day-cell">
@@ -30,7 +30,7 @@ function WeekCalendar({ weekplan }) {
                 </li>
               ))
             ) : (
-              <li className="no-exercise">No exercises</li>
+              <li className="no-exercise">Restday</li>
             )}
           </ul>
         </div>
@@ -63,10 +63,25 @@ export default function ProfilePage() {
       const res = await fetch("http://localhost:8080/api/plans", {
         credentials: "include",
       });
-      if (res.ok) {
-        const data = await res.json();
-        setWeekplan(data.days || {}); // Pass på data format her
-      }
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      const formatted = {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: [],
+      };
+
+      data.forEach((entry) => {
+        formatted[entry.day] = entry.exercises || [];
+      });
+
+      setWeekplan(formatted);
     } catch (err) {
       console.error("Failed to fetch weekplan", err);
     }
@@ -105,7 +120,7 @@ export default function ProfilePage() {
         }),
       });
       setShowModal(false);
-      await fetchWeekplan(); // Oppdater ukeplan etter lagring
+      await fetchWeekplan();
     } catch (err) {
       console.error("Failed to save plan", err);
     }
@@ -132,7 +147,10 @@ export default function ProfilePage() {
           {user ? (
             <>
               <h2>Welcome, {user.username}!</h2>
-
+              <div className="week-calendar-wrapper">
+                <h3 className="text-danger">Your Weekplan</h3>
+                <WeekCalendar weekplan={weekplan || {}} />
+              </div>
               <div className="content-wrapper mt-4">
                 <div className="favorite-grid">
                   <h3 className="text-danger">Your Favorite Exercises</h3>
@@ -174,10 +192,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 )}
-                <div className="week-calendar-wrapper">
-                  <h3 className="text-danger">Your Weekplan</h3>
-                  <WeekCalendar weekplan={weekplan || {}} />
-                </div>
               </div>
 
               <div className="bottom-image mt-5">
