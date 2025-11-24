@@ -53,16 +53,18 @@ export default function HomePage() {
   }, []);
 
   const toggleFavorite = async (ex) => {
-    const isFav = favorites.includes(ex.exerciseId);
+  const isFav = favorites.includes(ex.exerciseId);
 
-    if (!isFav) {
-      await addFavorite(ex);
-      setFavorites((prev) => [...prev, ex.exerciseId]);
-    } else {
-      await removeFavorite(ex.exerciseId);
-      setFavorites((prev) => prev.filter((id) => id !== ex.exerciseId));
-    }
-  };
+  if (!isFav) {
+    await addFavorite(ex);
+  } else {
+    await removeFavorite(ex.exerciseId);
+  }
+
+  const fresh = await getFavorites();
+  const favIds = fresh.map(f => f.exercise_id);
+  setFavorites(favIds);
+};
 
   return (
     <div className="homepage">
@@ -137,7 +139,7 @@ export default function HomePage() {
                   }}
                   onClick={() => toggleFavorite(ex)}
                 >
-                  {favorites.includes(ex.id) ? (
+                  {favorites.includes(ex.exerciseId) ? (
                     <FaStar color="gold" />
                   ) : (
                     <FaRegStar color="white" />

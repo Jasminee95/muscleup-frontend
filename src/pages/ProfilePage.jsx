@@ -5,6 +5,7 @@ import "../styles/ProfilePage.css";
 import { useNavigate } from "react-router-dom";
 import { logoutUser, getCurrentUser, getFavorites } from "../services/api";
 import strongWomanImg from "../assets/strongWoman.jpeg";
+import { removeFavorite } from "../services/api";
 
 function WeekCalendar({ weekplan }) {
   const weekDays = [
@@ -156,10 +157,39 @@ export default function ProfilePage() {
                   <h3 className="text-danger">Your Favorite Exercises</h3>
                   {favorites.map((fav) => (
                     <div
-                      key={fav.exercise_id}
+                      key={fav.id}
                       className="favorite-card"
                       onClick={() => handleAddToWeekplan(fav)}
+                      style={{ position: "relative" }}
                     >
+                      <div
+                        className="remove-fav"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+
+                          await removeFavorite(fav.id);
+                          
+                          const fresh = await getFavorites();
+                          setFavorites(fresh);
+                        }}
+                        style={{
+                          position: "absolute",
+                          top: "8px",
+                          right: "8px",
+                          cursor: "pointer",
+                          background: "rgba(255, 0, 0, 0.8)",
+                          color: "white",
+                          borderRadius: "50%",
+                          width: "24px",
+                          height: "24px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        ✕
+                      </div>
                       <img src={fav.gif_url} alt={fav.exercise_name} />
                       <h5>{fav.exercise_name}</h5>
                       <p>{fav.target}</p>

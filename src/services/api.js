@@ -26,13 +26,14 @@ export async function searchExercises(query) {
     if (!Array.isArray(raw)) return [];
 
     return raw.map((ex) => ({
-      id: ex.exerciseId, 
+      id: ex.exerciseId,
       exerciseId: ex.exerciseId,
       name: ex.name,
-      bodyPart: ex.bodyPart || "N/A",
-      target: ex.target || "N/A",
-      equipment: ex.equipment || "N/A",
-      imageUrl: ex.imageUrl, 
+      bodyPart: ex.bodyParts?.[0] || "Unknown",
+      target: ex.targetMuscles?.[0] || "Unknown",
+      equipment: ex.equipments?.[0] || "None",
+
+      imageUrl: ex.imageUrl,
     }));
   } catch (err) {
     console.error("Error searching exercises:", err);
