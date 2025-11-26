@@ -18,23 +18,25 @@ export async function getExercises() {
 export async function searchExercises(query) {
   try {
     const res = await api.get(`/api/exercises?search=${query}`);
-
     const raw = res.data.data;
 
     console.log("RAW RESULT:", raw);
 
     if (!Array.isArray(raw)) return [];
 
-    return raw.map((ex) => ({
-      id: ex.exerciseId,
-      exerciseId: ex.exerciseId,
-      name: ex.name,
-      bodyPart: ex.bodyParts?.[0] || "Unknown",
-      target: ex.targetMuscles?.[0] || "Unknown",
-      equipment: ex.equipments?.[0] || "None",
+    return raw.map((ex) => {
+      const safeId = String(ex.exerciseId || ex.id);
 
-      imageUrl: ex.imageUrl,
-    }));
+      return {
+        id: safeId,
+        exerciseId: safeId,
+        name: ex.name,
+        bodyPart: ex.bodyPart,
+        target: ex.target,
+        equipment: ex.equipment,
+        imageUrl: ex.imageUrl || ex.gifUrl,
+      };
+    });
   } catch (err) {
     console.error("Error searching exercises:", err);
     return [];

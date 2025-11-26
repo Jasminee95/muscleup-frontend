@@ -157,7 +157,7 @@ export default function ProfilePage() {
                   <h3 className="text-danger">Your Favorite Exercises</h3>
                   {favorites.map((fav) => (
                     <div
-                      key={fav.id}
+                      key={fav.exercise_id}
                       className="favorite-card"
                       onClick={() => handleAddToWeekplan(fav)}
                       style={{ position: "relative" }}
@@ -167,8 +167,8 @@ export default function ProfilePage() {
                         onClick={async (e) => {
                           e.stopPropagation();
 
-                          await removeFavorite(fav.id);
-                          
+                          await removeFavorite(fav.exercise_id);
+
                           const fresh = await getFavorites();
                           setFavorites(fresh);
                         }}

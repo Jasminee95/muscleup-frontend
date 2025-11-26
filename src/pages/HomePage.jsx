@@ -16,12 +16,24 @@ export default function HomePage() {
   const [selectedMuscle, setSelectMuscle] = useState("");
   const [favorites, setFavorites] = useState([]);
 
-  const handleMuscleClick = async (muscle) => {
-    setSelectMuscle(muscle);
+  const bodyParts = [
+    "Back",
+    "Cardio",
+    "Chest",
+    "Lower arms",
+    "Lower legs",
+    "Neck",
+    "Shoulders",
+    "Upper arms",
+    "Upper legs",
+    "Waist",
+  ];
+
+  const handleBodyPartClick = async (bp) => {
+    setSelectMuscle(bp);
     setSearch("");
 
-    const results = await searchExercises(muscle.toLowerCase());
-    console.log("Muscle results:", results);
+    const results = await searchExercises(bp.toLowerCase());
     setExercises(results);
   };
 
@@ -31,7 +43,7 @@ export default function HomePage() {
 
     setSelectMuscle("");
     const results = await searchExercises(search.toLowerCase());
-    console.log("Search results:", results);
+    console.log("Search results first item:", results[0]);
     setExercises(results);
   };
 
@@ -39,11 +51,11 @@ export default function HomePage() {
     async function fetchFavs() {
       try {
         const favs = await getFavorites();
-        console.log("FAVS FROM BACKEND:", favs);  
+        console.log("FAVS FROM BACKEND:", favs);
         const favIds = Array.isArray(favs)
-        ? favs.map((f) => f.exercise_id)
-        : [];
-      setFavorites(favIds);
+          ? favs.map((f) => f.exercise_id)
+          : [];
+        setFavorites(favIds);
       } catch (err) {
         console.log("Not logged in or error fetching favorites.");
       }
@@ -53,18 +65,19 @@ export default function HomePage() {
   }, []);
 
   const toggleFavorite = async (ex) => {
-  const isFav = favorites.includes(ex.exerciseId);
+    const safeId = ex.exerciseId || ex.id || ex.name;
 
-  if (!isFav) {
-    await addFavorite(ex);
-  } else {
-    await removeFavorite(ex.exerciseId);
-  }
+    const isFav = favorites.includes(safeId);
 
-  const fresh = await getFavorites();
-  const favIds = fresh.map(f => f.exercise_id);
-  setFavorites(favIds);
-};
+    if (!isFav) {
+      await addFavorite({ ...ex, exerciseId: safeId });
+    } else {
+      await removeFavorite(safeId);
+    }
+
+    const fresh = await getFavorites();
+    setFavorites(fresh.map((f) => f.exercise_id));
+  };
 
   return (
     <div className="homepage">
@@ -81,21 +94,19 @@ export default function HomePage() {
           </h3>
 
           <Row className="justify-content-center mt-4">
-            {["Chest", "Back", "Arms", "Legs", "Shoulders", "Abs"].map(
-              (muscle) => (
-                <Col xs="auto" key={muscle}>
-                  <Button
-                    variant="outline-danger"
-                    className={`muscle-btn m-2 ${
-                      selectedMuscle === muscle ? "active-muscle" : ""
-                    }`}
-                    onClick={() => handleMuscleClick(muscle)}
-                  >
-                    {muscle}
-                  </Button>
-                </Col>
-              )
-            )}
+            {bodyParts.map((bp) => (
+              <Col xs="auto" key={bp}>
+                <Button
+                  variant="outline-danger"
+                  className={`muscle-btn m-2 ${
+                    selectedMuscle === bp ? "active-muscle" : ""
+                  }`}
+                  onClick={() => handleBodyPartClick(bp)}
+                >
+                  {bp}
+                </Button>
+              </Col>
+            ))}
           </Row>
 
           <Form
@@ -116,55 +127,57 @@ export default function HomePage() {
               <h4 className="text-danger mb-4">Exercises Found:</h4>
             )}
 
-            {exercises.map((ex) => (
-              <div
-                key={ex.exerciseId}
-                className="exercise-card mx-auto mb-3 p-3"
-                style={{
-                  width: "70%",
-                  border: "1px solid red",
-                  borderRadius: "10px",
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                  position: "relative",
-                }}
-              >
+            {exercises.map((ex, index) => {
+              return (
                 <div
-                  className="favorite-star"
+                  key={`${ex.exerciseId ?? ex.id ?? ex.name}-${index}`}
+                  className="exercise-card mx-auto mb-3 p-3"
                   style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    cursor: "pointer",
-                    fontSize: "1.6rem",
+                    width: "70%",
+                    border: "1px solid red",
+                    borderRadius: "10px",
+                    backgroundColor: "rgba(0,0,0,0.6)",
+                    position: "relative",
                   }}
-                  onClick={() => toggleFavorite(ex)}
                 >
-                  {favorites.includes(ex.exerciseId) ? (
-                    <FaStar color="gold" />
-                  ) : (
-                    <FaRegStar color="white" />
+                  <div
+                    className="favorite-star"
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      cursor: "pointer",
+                      fontSize: "1.6rem",
+                    }}
+                    onClick={() => toggleFavorite(ex)}
+                  >
+                    {favorites.includes(ex.exerciseId) ? (
+                      <FaStar color="gold" />
+                    ) : (
+                      <FaRegStar color="white" />
+                    )}
+                  </div>
+                  <h5 className="text-danger">{ex.name}</h5>
+                  <p>
+                    <strong>Muscle:</strong> {ex.target}
+                  </p>
+                  <p>
+                    <strong>Body Part:</strong> {ex.bodyPart}
+                  </p>
+                  <p>
+                    <strong>Equipment:</strong> {ex.equipment}
+                  </p>
+                  {ex.imageUrl && (
+                    <img
+                      src={ex.imageUrl}
+                      alt={ex.name}
+                      className="img-fluid mt-3"
+                      style={{ maxHeight: "200px", borderRadius: "8px" }}
+                    />
                   )}
                 </div>
-                <h5 className="text-danger">{ex.name}</h5>
-                <p>
-                  <strong>Muscle:</strong> {ex.target}
-                </p>
-                <p>
-                  <strong>Body Part:</strong> {ex.bodyPart}
-                </p>
-                <p>
-                  <strong>Equipment:</strong> {ex.equipment}
-                </p>
-                {ex.imageUrl && (
-                  <img
-                    src={ex.imageUrl}
-                    alt={ex.name}
-                    className="img-fluid mt-3"
-                    style={{ maxHeight: "200px", borderRadius: "8px" }}
-                  />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="bottom-image mt-5">
             <img
