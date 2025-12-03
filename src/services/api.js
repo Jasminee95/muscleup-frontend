@@ -34,7 +34,7 @@ export async function searchExercises(query) {
         bodyPart: ex.bodyPart,
         target: ex.target,
         equipment: ex.equipment,
-        imageUrl: ex.imageUrl || ex.gifUrl,
+        imageUrl: ex.imageUrl,
       };
     });
   } catch (err) {

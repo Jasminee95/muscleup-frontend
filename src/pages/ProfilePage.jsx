@@ -7,7 +7,7 @@ import { logoutUser, getCurrentUser, getFavorites } from "../services/api";
 import strongWomanImg from "../assets/strongWoman.jpeg";
 import { removeFavorite } from "../services/api";
 
-function WeekCalendar({ weekplan }) {
+function WeekCalendar({ weekplan, onRemove }) {
   const weekDays = [
     "Monday",
     "Tuesday",
@@ -23,17 +23,25 @@ function WeekCalendar({ weekplan }) {
       {weekDays.map((day) => (
         <div key={day} className="day-cell">
           <h5 className="day-name">{day}</h5>
-          <ul className="exercise-list">
-            {weekplan && weekplan[day] && weekplan[day].length > 0 ? (
-              weekplan[day].map((ex, i) => (
-                <li key={i} className="exercise-item">
-                  {ex.exercise_name || ex.name || "Exercise"}
-                </li>
-              ))
-            ) : (
-              <li className="no-exercise">Restday</li>
-            )}
-          </ul>
+
+          {weekplan && weekplan[day] && weekplan[day].length > 0 ? (
+            weekplan[day].map((ex, i) => (
+              <div key={i} className="week-exercise-card">
+                <img src={ex.gif_url || ex.image} alt={ex.exercise_name} />
+
+                <div className="week-ex-name">{ex.exercise_name}</div>
+
+                <button
+                  className="remove-from-day"
+                  onClick={() => onRemove(day, ex)}
+                >
+                  ✕
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="no-exercise">Restday</div>
+          )}
         </div>
       ))}
     </div>
@@ -41,6 +49,7 @@ function WeekCalendar({ weekplan }) {
 }
 
 export default function ProfilePage() {
+  const [pickerPos, setPickerPos] = useState(null);
   const [user, setUser] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -136,9 +145,38 @@ export default function ProfilePage() {
     }
   };
 
-  const handleAddToWeekplan = (exercise) => {
+  const handleAddToWeekplan = (e, exercise) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    setPickerPos({
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX + rect.width + 10,
+    });
+
     setSelectedExercise(exercise);
-    setShowModal(true);
+  };
+
+  const removeFromWeekplan = async (day, exercise) => {
+    console.log("SENDER TIL BACKEND:", { day, exercise });
+    try {
+      const res = await fetch("http://localhost:8080/api/plans/remove", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ day, exercise }),
+      });
+
+      const data = await res.json();
+      console.log("BACKEND RESPONSE:", data);
+
+      if (!res.ok) {
+        console.error("Feil fra backend:", data);
+      }
+
+      await fetchWeekplan();
+    } catch (err) {
+      console.error("Failed to remove exercise", err);
+    }
   };
 
   return (
@@ -150,16 +188,19 @@ export default function ProfilePage() {
               <h2>Welcome, {user.username}!</h2>
               <div className="week-calendar-wrapper">
                 <h3 className="text-danger">Your Weekplan</h3>
-                <WeekCalendar weekplan={weekplan || {}} />
+                <WeekCalendar
+                  weekplan={weekplan || {}}
+                  onRemove={removeFromWeekplan}
+                />
               </div>
               <div className="content-wrapper mt-4">
+                <h3 className="text-danger">Your Favorite Exercises</h3>
                 <div className="favorite-grid">
-                  <h3 className="text-danger">Your Favorite Exercises</h3>
                   {favorites.map((fav) => (
                     <div
                       key={fav.exercise_id}
                       className="favorite-card"
-                      onClick={() => handleAddToWeekplan(fav)}
+                      onClick={(e) => handleAddToWeekplan(e, fav)}
                       style={{ position: "relative" }}
                     >
                       <div
@@ -242,6 +283,48 @@ export default function ProfilePage() {
             </>
           ) : (
             <p>Loading profile...</p>
+          )}
+          {pickerPos && (
+            <div
+              className="day-picker"
+              style={{
+                position: "absolute",
+                top: pickerPos.top,
+                left: pickerPos.left,
+                background: "rgba(0,0,0,0.9)",
+                padding: "12px",
+                borderRadius: "8px",
+                border: "1px solid red",
+                zIndex: 9999,
+              }}
+            >
+              <h5 className="text-danger mb-2">Choose day</h5>
+
+              {weekDays.map((day) => (
+                <Button
+                  key={day}
+                  variant="outline-danger"
+                  size="sm"
+                  className="d-block mb-1"
+                  style={{ width: "120px" }}
+                  onClick={async () => {
+                    await saveToMongo(day);
+                    setPickerPos(null);
+                  }}
+                >
+                  {day}
+                </Button>
+              ))}
+
+              <Button
+                size="sm"
+                variant="secondary"
+                className="mt-2"
+                onClick={() => setPickerPos(null)}
+              >
+                Cancel
+              </Button>
+            </div>
           )}
         </Container>
       </div>
