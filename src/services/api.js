@@ -43,20 +43,6 @@ export async function searchExercises(query) {
   }
 }
 
-// export async function searchExercises(query) {
-//   try {
-//     const res = await api.get(`/api/exercises?search=${query}`);
-
-//     if (Array.isArray(res.data.data)) {
-//     return  res.data.data;
-//   }
-
-//   return []
-//  } catch (err) {
-//     console.error("Error searching exercises:", err);
-//     return [];
-//   }
-// }
 
 export async function getFavorites() {
   try {
@@ -67,22 +53,6 @@ export async function getFavorites() {
     return [];
   }
 }
-
-// export async function addFavorite(exercise) {
-//     try {
-//         const res = await api.post("/api/favorites", {
-//             exercise_id: exercise.exerciseId,
-//             exercise_name: exercise.name,
-//             body_part: exercise.bodyPart,
-//             target: exercise.target,
-//             equipment: exercise.equipment,
-//             gif_url: exercise.imageUrl
-//         });
-//         return res.data;
-//     } catch (err) {
-//         console.error("Error adding favorites:", err);
-//     }
-// }
 
 export async function addFavorite(ex) {
   const res = await api.post("/api/favorites", {
@@ -139,15 +109,3 @@ export async function getCurrentUser() {
   }
 }
 
-// export async function getPlans() {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/schedule`, {
-//       credentials: "include",
-//     });
-//     if (!response.ok) throw new Error("Failed to fetch plans");
-//     return await response.json();
-//   } catch (error) {
-//     console.error("Error fetching plans:", error);
-//     throw error;
-//   }
-// }
